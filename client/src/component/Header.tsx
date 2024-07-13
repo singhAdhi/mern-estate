@@ -1,15 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, FormEvent } from "react";
 
-export default function Header() {
-  const [data, setData] = useState("");
-  const inputData = useRef();
+function Header() {
+  const [data, setData] = useState<string>("");
+  const inputData = useRef<HTMLInputElement>(null);
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setData(inputData?.current?.value);
+    if (inputData.current) {
+      setData(inputData.current.value);
+    }
   }
+
   console.log(data);
+
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -26,12 +30,12 @@ export default function Header() {
           <input
             type="text"
             placeholder="search"
-            className="bg-transparent focus:outline-none w-24 sm:w-64 "
+            className="bg-transparent focus:outline-none w-24 sm:w-64"
             ref={inputData}
             name=""
             id=""
           />
-          <button>submit</button>
+          <button type="submit">submit</button>
         </form>
         <ul className="flex gap-4">
           <Link to="/">
@@ -49,3 +53,4 @@ export default function Header() {
     </header>
   );
 }
+export default Header;
