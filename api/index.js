@@ -21,6 +21,18 @@ app.use(express.json());
 app.use("/api/user", userRouter);
 app.use("/signup", authRouter);
 
+app.use((err, req, res, next) => {
+  //this is the middleware for error
+  const statuscode = err.statuscode || 500;
+  const message = err.message || "internal server error";
+
+  return res.status(statuscode).json({
+    sucess: false,
+    message,
+    statuscode,
+  });
+});
+
 app.listen(3000, () => {
   console.log("Server is running");
 });
