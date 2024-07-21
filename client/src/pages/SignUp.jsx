@@ -1,26 +1,28 @@
-import React from "react";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const Signin = () => {
+const SignUp = () => {
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const name = useRef();
   const email = useRef();
   const password = useRef();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
+      username: name.current.value,
       email: email.current.value,
       password: password.current.value,
     };
-    setLoading(true);
+    setData(formData);
+    setLoading(true); // Set loading to true before making the request
     setError(null);
     try {
-      let res = await fetch("/api/auth/signin", {
-        // Correct endpoint for sign-in
+      let res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,12 +31,7 @@ const Signin = () => {
       });
 
       let resp = await res.json();
-      console.log(resp, resp.success, resp.message);
-      if (resp.success) {
-        navigate("/");
-      } else {
-        setError(resp.message);
-      }
+      navigate("/signin");
       console.log(resp);
     } catch (error) {
       setError(error.message);
@@ -45,8 +42,14 @@ const Signin = () => {
 
   return (
     <div className="max-w-lg p-3 mx-auto">
-      <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
+      <h1 className="text-3xl text-center font-semibold my-7">Signup</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="name"
+          ref={name}
+          className="border p-3 rounded-lg"
+        />
         <input
           type="email"
           placeholder="email"
@@ -65,18 +68,18 @@ const Signin = () => {
           type="submit"
           disabled={loading}
         >
-          {loading ? "Loading..." : "Sign in"}
+          {loading ? "Loading..." : "Sign Up"}
         </button>
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
       <div className="flex gap-2 mt-5">
-        <p>Don't have an account?</p>
-        <Link to={"/signup"}>
-          <span className="text-blue-700">Sign up</span>
+        <p>Have an account?</p>
+        <Link to={"/sign-in"}>
+          <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
     </div>
   );
 };
 
-export default Signin;
+export default SignUp;
