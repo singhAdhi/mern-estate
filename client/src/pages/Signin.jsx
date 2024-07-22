@@ -2,13 +2,19 @@ import React from "react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 
 const Signin = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { error, loading } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const email = useRef();
   const password = useRef();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,8 +22,8 @@ const Signin = () => {
       email: email.current.value,
       password: password.current.value,
     };
-    setLoading(true);
-    setError(null);
+    dispatch(signInStart());
+
     try {
       let res = await fetch("/api/auth/signin", {
         // Correct endpoint for sign-in
@@ -31,15 +37,14 @@ const Signin = () => {
       let resp = await res.json();
       console.log(resp, resp.success, resp.message);
       if (resp.success) {
+        dispatch(signInSuccess(resp));
         navigate("/");
       } else {
-        setError(resp.message);
+        dispatch(signInFailure(resp.message));
       }
       console.log(resp);
     } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+      dispatch(signInFailure(resp.message));
     }
   };
 

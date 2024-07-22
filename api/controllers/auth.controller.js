@@ -42,11 +42,12 @@ export const signin = async (req, res) => {
     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-
+    console.log(validUser);
     res.status(200).json({
       success: true,
       message: "Sign-in successful",
       token,
+      validUser,
     });
   } catch (error) {
     res.status(500).json({
